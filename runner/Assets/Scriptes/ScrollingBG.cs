@@ -3,12 +3,15 @@
 public class ScrollingBG : MonoBehaviour
 {
     private readonly float backgroundSize = 34f;
+    public float parallaxSpeed;
 
     private Transform cam;
     private Transform[] backgrounds;
 
     private int leftIndex;
     private int rightIndex;
+
+    private float lastCamPosX;
 
     private void Start()
     {
@@ -25,6 +28,11 @@ public class ScrollingBG : MonoBehaviour
 
     private void Update()
     {
+
+        var offset = cam.position.x - lastCamPosX;
+        transform.position += Vector3.right * offset * parallaxSpeed;
+        lastCamPosX = cam.position.x;
+        
         if (cam.position.x > backgrounds[rightIndex].position.x)
             ScrollLeft();
     }

@@ -2,7 +2,6 @@
 
 public class MapRandomizer : MonoBehaviour
 {
-    //LevPlatform sizeX is 6f;
 
     [SerializeField] private Transform firstPlatform;
     [SerializeField] private Transform bigPlatform;
@@ -11,9 +10,11 @@ public class MapRandomizer : MonoBehaviour
     [SerializeField] private Transform target;
 
     private readonly float jumpHeight = 3f;
+    private readonly float minY = -4.5f;
+    private readonly float maxY = 0;
 
     private float maxOffsetX;
-    private float minOffsetY;
+    private float maxOffsetY;
 
     private GameObject lastPlatform;
     private Vector3 lastPlatformPos;
@@ -22,7 +23,6 @@ public class MapRandomizer : MonoBehaviour
     {
         lastPlatform = firstPlatform.gameObject;
         lastPlatformPos = firstPlatform.transform.position;
-        //GenerateMap();
     }
 
     private void Update()
@@ -34,18 +34,45 @@ public class MapRandomizer : MonoBehaviour
 
     private void GenerateMap()
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 10; i++)
         {
-            maxOffsetX = 6f;
+            maxOffsetX = 5.5f;
+            maxOffsetY = 0f;
 
-            var offsetX = Random.Range(1, maxOffsetX - 0.5f);
-            var newPlatformPos = new Vector3(lastPlatformPos.x + maxOffsetX + offsetX, lastPlatformPos.y, 0);
+            if (lastPlatformPos.y + 2 > 0)
+                maxOffsetY = Random.Range(0, -4);
+            else if (lastPlatformPos.y + 2 <= 0)
+            {
+                if (Random.Range(-1,1) >= 0)
+                {
+                    //Upper
+                    maxOffsetY = Random.Range(0, maxY - lastPlatformPos.y - 2f);
+                }
+                else
+                {
+                    //Lower
+                    maxOffsetY = Random.Range(0, minY - lastPlatformPos.y );
+                }
+            }
+
+            var offsetX = Random.Range(3, maxOffsetX);
+            var newPlatformPos = new Vector3(lastPlatformPos.x + maxOffsetX + offsetX, lastPlatformPos.y + maxOffsetY, 0);
             lastPlatformPos = newPlatformPos;
 
-            Instantiate(bigPlatform, newPlatformPos, Quaternion.identity);
+            Instantiate(GetRandomPlatform(), newPlatformPos, Quaternion.identity);
 
-            Debug.Log(Vector3.Distance(target.position, lastPlatformPos));
-            //float offsetY = Random.Range(minOffsetY, jumpHeight);
         }
+    }
+
+    private Transform GetRandomPlatform()
+    {
+        int randomValue = Random.Range(0, 10);
+
+        if (randomValue < 4)
+            return bigPlatform;
+        else if (randomValue >= 4 && randomValue < 8)
+            return flatPlatform;
+        else
+            return midPlatform;
     }
 }

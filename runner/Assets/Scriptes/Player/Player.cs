@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)    
             Jump();
         
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded)
         {
             horizontalMovementSpeed *= 1.5f;
             animator.SetBool("Running", true);
